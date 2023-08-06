@@ -1,3 +1,7 @@
+// go.js
+// 
+// starting script after game reset
+
 import HackableBaseServer from "./if.server.hackable"
 import BasePlayer from "./if.player";
 import { dpList } from "./lib.utils"; 
@@ -28,8 +32,10 @@ function execHackingScript(ns, servers) {
 	}
 }
 
-/** @param {NS} ns **/
+
 export async function main(ns) {
+	ns.disableLog("sleep");
+	ns.disableLog("asleep");
 	let player = new BasePlayer(ns, "player");
 	// player.updateCache().catch(console.error);
 	player.createEventListener("hacking.level").catch(console.error)
@@ -49,7 +55,8 @@ export async function main(ns) {
 	}
 
 	for (let server of servers) {
-		await ns.scp(["bin.wk.js", "bin.hk.js", "bin.gr.js"], "home", server.id)
+		//ns.tprint(`copying files to ${server.id}`)
+		await ns.scp(["bin.wk.js", "bin.hk.js", "bin.gr.js"], server.id, "home")
 	}
 
 
@@ -61,7 +68,7 @@ export async function main(ns) {
 			}
 			// Upload files to any server that doesn't have them
 			if (ns.ls(server.id, "bin.").length == 0) {
-				await ns.scp(["bin.wk.js", "bin.hk.js", "bin.gr.js"], "home", server.id)
+				await ns.scp(["bin.wk.js", "bin.hk.js", "bin.gr.js"], server.id, "home")
 			}
 		}
 

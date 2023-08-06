@@ -1,10 +1,12 @@
-export default class BaseStock { 
-	constructor(ns, ticker) {
-		this.ns = ns;
-		this._ticker = ticker;
-	}
+import { handleDB } from "./lib.db";
 
-    listGetters(instance, properties=new Set()) {
+export default class BaseStock {
+    constructor(ns, ticker) {
+        this.ns = ns;
+        this._ticker = ticker;
+    }
+
+    listGetters(instance, properties = new Set()) {
         let getters = Object.entries(
             Object.getOwnPropertyDescriptors(
                 Reflect.getPrototypeOf(instance)
@@ -18,10 +20,10 @@ export default class BaseStock {
     }
 
 
-	get ticker() { return this._ticker };
-  get symbol() { return this._symbol };
+    get ticker() { return this._ticker };
+    get symbol() { return this._symbol };
 
-	async updateCache(repeat=true, kv=new Map()) {
+    async updateCache(repeat = true, kv = new Map()) {
         do {
             const db = await handleDB();
             let old = await db["get"]("stocks", this.symbol) || {}
@@ -31,7 +33,7 @@ export default class BaseStock {
                     old[g] = this[g];
                 }
             })
-            kv.forEach((v,k) => old[k] = v)
+            kv.forEach((v, k) => old[k] = v)
 
             await db["put"]("stocks", old)
             if (repeat) { await this.ns.asleep(6000) }

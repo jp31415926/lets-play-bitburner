@@ -1,7 +1,6 @@
 import BasePlayer from "if.player";
 import BaseServer from "if.server";
 import { dpList } from "lib.utils";
-/** @param {NS} ns **/
 
 const powerToRam = (power) => {
 	return Math.pow(2, power);

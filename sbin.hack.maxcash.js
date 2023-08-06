@@ -26,7 +26,7 @@ export async function main(ns) {
 	// let target = "foodnstuff"
 	ns.disableLog("ALL");
 	for (let server of servers) {
-		await ns.scp(["bin.wk.js", "bin.hk.js", "bin.gr.js"], "home", server)
+		await ns.scp(["bin.wk.js", "bin.hk.js", "bin.gr.js"], server, "home")
 	}
 
 	while(true) {

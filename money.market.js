@@ -1,9 +1,9 @@
 import BasePlayer from "if.player";
 import BaseStock from "if.stock";
 import TIXStock from "if.stock.tix";
-import FourSigmaTIXStock from "if.stock.4s";
+import FourSigmaTIXStock from "if.stock.tix.4s";
 import PrettyTable from "src.prettytable";
-import {stockExtenderLimit, stockExtenderShort } from "if.stock.short";
+import {stockExtenderLimit, stockExtenderShort} from "if.stock.short";
 
 const stock_list = ["ECP", "MGCP", "BLD", "CLRK", "OMTK", "FSIG", "KGI", "FLCM", "STM", "DCOMM", "HLS", "VITA", "ICRS", "UNV", "AERO", "OMN", "SLRS", "GPH", "NVMD", "WDS", "LXO", "RHOC", "APHE", "SYSC", "CTK", "NTLK", "OMGA", "FNS", "JGN", "SGC", "CTYS", "MDYN", "TITN"]
 
@@ -39,20 +39,25 @@ function hasCycleOccurred(stocks) {
 	return false;
 }
 
-/** @param {NS} ns **/
+
 export async function main(ns) {
     ns.disableLog("sleep");
     ns.disableLog("asleep");
+    ns.tail();
 	let player = new BasePlayer(ns, "player");
 	let permissions = 0;
 	permissions += ACL.WSE * player.market.manual.wse;
 	permissions += ACL.TIX * player.market.api.tix;
+	//permissions += ACL.TIX;
 	permissions += ACL.WSE4S * player.market.manual.fourSigma;
 	permissions += ACL.TIX4S * player.market.api.fourSigma;
+	//permissions += ACL.TIX4S;
 	permissions += ACL.LIMIT * false
 	permissions += ACL.SHORT * false
 	
 	ns.clearLog();
+    ns.print(`player.market.manual.wse=${player.market.manual.wse}`);
+    ns.print(`player.market.manual.fourSigma=${player.market.manual.fourSigma}`);
 	ns.print("Initializing Stock Market with following parameters: ")
 	ns.print("WSE: ", !!(permissions & ACL.WSE))
 	ns.print("TIX: ", !!(permissions & ACL.TIX))
@@ -68,7 +73,8 @@ export async function main(ns) {
     }
 
     for (let s of stocks) {
-        await s.updateCache(false);
+        //await s.updateCache(false);
+        try { await s.updateCache(false) } catch {}
     }
 
 	if (!(permissions & ACL.WSE)) { return }
